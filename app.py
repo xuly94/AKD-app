@@ -1,38 +1,69 @@
-import lightgbm as lgb
 import streamlit as st
+import lightgbm as lgb
 import numpy as np
 
-# 加载AKD Prediction Model的LightGBM模型
+# Load the AKD and CKD models
 akd_model = lgb.Booster(model_file='akd_model.txt')
-
-# 加载CKD Prediction Model的LightGBM模型
 ckd_model = lgb.Booster(model_file='ckd_model.txt')
 
-# 添加应用程序标题
-st.title("Prediction Model for Nephrectomy")
+def predict_akd_probability(features):
+    akd_prob = akd_model.predict([features])
+    return akd_prob[0]
 
-# 用户选择预测 AKD 还是 CKD
-prediction_type = st.radio("选择预测类型", ("AKD", "CKD"))
+def predict_ckd_probability(features):
+    ckd_prob = ckd_model.predict([features])
+    return ckd_prob[0]
 
-# 根据预测类型指定特征列
-if prediction_type == "AKD":
-    feature_columns = ['Operativeduration', 'Hb', 'Bloodloss', 'AKIGrade', 'Hct', 'ALB', 'SBP', 'BaslineeGFR', 'Anion_gap']
-else:
-    feature_columns = ['BaslineeGFR', 'Age', 'Pathology', 'AKI_and_AKD', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC']
+def main():
+    st.title('AKD and CKD Probability Prediction')
 
-# 创建输入特征的输入框
-features = []
-for feature_name in feature_columns:
-    feature_value = st.number_input(f'Enter {feature_name}', min_value=0.0, max_value=100.0, step=0.1)
-    features.append(feature_value)
+    # User selects prediction type (AKD or CKD)
+    prediction_type = st.radio("Select Prediction Type", ("AKD", "CKD"))
 
-# 创建一个按钮用于进行预测
-if st.button('Predict'):
-    features_array = np.array(features).reshape(1, -1)
-    
+    # Feature input
+    features = []
+
     if prediction_type == "AKD":
-        akd_probability = akd_model.predict(features_array)
-        st.write(f'AKD Probability: {akd_probability[0]:.2f}')
+        st.subheader("AKD Features")
+
+        urine_protein = st.selectbox("Urine Protein", [0, 1, 2, 3])
+        aki_grade = st.selectbox("AKI Grade", [0, 1, 2, 3])
+        hb = st.slider("Hb (integer)", 0, 100, step=1)
+        bloodloss = st.slider("Blood Loss (integer)", 0, 100, step=1)
+        sbp = st.slider("SBP (integer)", 0, 200, step=1)
+        operativeduration = st.number_input("Operative Duration", value=0.0, format="%.2f")
+        hct = st.number_input("Hct", value=0.0, format="%.2f")
+        alb = st.number_input("ALB", value=0.0, format="%.2f")
+        baseline_egfr = st.number_input("Baseline eGFR", value=0.0, format="%.2f")
+        anion_gap = st.number_input("Anion Gap", value=0.0, format="%.2f")
+
+        features.extend([operativeduration, hb, bloodloss, aki_grade, hct, alb, sbp, baseline_egfr, anion_gap])
     else:
-        ckd_probability = ckd_model.predict(features_array)
-        st.write(f'CKD Probability: {ckd_probability[0]:.2f}')
+        st.subheader("CKD Features")
+
+        urine_protein = st.selectbox("Urine Protein", [0, 1, 2, 3])
+        aki_and_akd = st.selectbox("AKI and AKD", [0, 1, 2, 3])
+        pathology = st.selectbox("Pathology", [0, 1, 2])
+        age = st.slider("Age (integer)", 0, 120, step=1)
+        baseline_egfr = st.number_input("Baseline eGFR", value=0.0, format="%.2f")
+        tbil = st.number_input("TBIL", value=0.0, format="%.2f")
+        mg = st.number_input("Mg", value=0.0, format="%.2f")
+        scr = st.number_input("Scr", value=0.0, format="%.2f")
+        tg = st.number_input("TG", value=0.0, format="%.2f")
+        wbc = st.number_input("WBC", value=0.0, format="%.2f")
+
+        features.extend([baseline_egfr, age, pathology, aki_and_akd, tbil, mg, scr, tg, wbc])
+
+    # Create a button to make predictions
+    if st.button('Predict'):
+        features_array = np.array(features).reshape(1, -1)
+
+        if prediction_type == "AKD":
+            akd_probability = predict_akd_probability(features_array)
+            st.write(f'AKD Probability: {akd_probability:.2f}')
+        else:
+            ckd_probability = predict_ckd_probability(features_array)
+            st.write(f'CKD Probability: {ckd_probability:.2f}')
+
+if __name__ == '__main__':
+    main()
