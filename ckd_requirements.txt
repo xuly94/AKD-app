@@ -1,4 +1,0 @@
-streamlit
-lightgbm
-pandas
-numpy
