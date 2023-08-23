@@ -28,10 +28,10 @@ for column in feature_columns:
     elif column == 'Age':
         feature_value = st.number_input(column, value=0, step=1)
     else:
-        if column in ['Operativeduration', 'Hb', 'Bloodloss', 'Hct', 'SBP', 'ALB', 'BaslineeGFR', 'Anion_gap', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC']:
-            feature_value = st.number_input(column, value=0.0, step=0.01, format="%.2f")
-        else:
+        if column in ['Operativeduration', 'Hb', 'Bloodloss', 'Hct', 'SBP', 'ALB', 'BaslineeGFR', 'Anion_gap']:
             feature_value = st.number_input(column, value=0, step=1)
+        else:
+            feature_value = st.number_input(column, value=0.0, step=0.01, format="%.2f")
     input_features[column] = feature_value
 
 # 创建一个按钮，当用户点击时进行预测
