@@ -16,24 +16,20 @@ prediction_type = st.radio("选择预测类型", ("AKD", "CKD"))
 
 # 根据预测类型指定特征列
 if prediction_type == "AKD":
-    feature_columns = ['Operativeduration', 'Hb', 'Bloodloss', 'Urine_protein', 'AKIGrade', 'Hct', 'ALB', 'SBP', 'BaslineeGFR', 'Anion_gap']
+    feature_columns = ['Operativeduration', 'Hb', 'Bloodloss', 'AKIGrade', 'Hct', 'ALB', 'SBP', 'BaslineeGFR', 'Anion_gap']
 else:
-    feature_columns = ['BaslineeGFR', 'Age', 'Pathology', 'AKI_and_AKD', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC', 'Urine_protein']
+    feature_columns = ['BaslineeGFR', 'Age', 'Pathology', 'AKI_and_AKD', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC']
 
 # 收集输入特征值
 input_features = {}
 for column in feature_columns:
-    if column == 'Urine_protein':
+    if column == 'Urine_protein' or column == 'AKI_and_AKD' or column == 'Pathology':
         feature_value = st.selectbox(column, [0, 1, 2, 3])
-    elif column == 'AKI_and_AKD':
-        feature_value = st.selectbox(column, [0, 1, 2, 3])
-    elif column == 'Pathology':
-        feature_value = st.selectbox(column, [0, 1, 2])
     elif column == 'Age':
         feature_value = st.number_input(column, value=0, step=1)
     else:
-        if column in ['Operativeduration', 'Hb', 'Bloodloss', 'Hct', 'SBP', 'ALB', 'BaslineeGFR', 'Anion_gap']:
-            feature_value = st.number_input(column, value=0.0, format="%.2f")
+        if column in ['Operativeduration', 'Hb', 'Bloodloss', 'Hct', 'SBP', 'ALB', 'BaslineeGFR', 'Anion_gap', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC']:
+            feature_value = st.number_input(column, value=0.0, step=0.01, format="%.2f")
         else:
             feature_value = st.number_input(column, value=0, step=1)
     input_features[column] = feature_value
