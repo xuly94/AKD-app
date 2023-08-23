@@ -32,7 +32,7 @@ if st.button('Predict'):
     
     if prediction_type == "AKD":
         akd_probability = akd_model.predict(features_array)
-        st.write(f'AKD Probability: {akd_probability[1]:.2f}')
+        st.write(f'AKD Probability: {akd_probability[0]:.2f}')
     else:
         ckd_probability = ckd_model.predict(features_array)
-        st.write(f'CKD Probability: {ckd_probability[1]:.2f}')
+        st.write(f'CKD Probability: {ckd_probability[0]:.2f}')
