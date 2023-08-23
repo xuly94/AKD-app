@@ -47,12 +47,13 @@ input_features = {}
 for column in feature_columns:
     min_value, max_value = feature_constraints[column]
     if column in ['Hb', 'Bloodloss', 'SBP', 'Age']:
-        feature_value = st.number_input(column, value=0, min_value=min_value, max_value=max_value, step=1)
+        feature_value = st.number_input(column, value=0, min_value=int(min_value), max_value=int(max_value), step=1)
     elif column in ['Urine_protein', 'AKIGrade', 'AKI_and_AKD', 'Pathology']:
         feature_value = st.selectbox(column, [0, 1, 2, 3])
     else:
-        feature_value = st.number_input(column, value=0.0, min_value=min_value, max_value=max_value, step=0.01, format="%.2f")
+        feature_value = st.number_input(column, value=0.0, min_value=float(min_value), max_value=float(max_value), step=0.01, format="%.2f")
     input_features[column] = feature_value
+
 
 # 创建一个按钮，当用户点击时进行预测
 if st.button("预测"):
