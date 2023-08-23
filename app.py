@@ -17,43 +17,22 @@ prediction_type = st.radio("选择预测类型", ("AKD", "CKD"))
 # 根据预测类型指定特征列
 if prediction_type == "AKD":
     feature_columns = ['Operativeduration', 'Hb', 'Bloodloss', 'AKIGrade', 'Hct', 'ALB', 'SBP', 'BaslineeGFR', 'Anion_gap']
-    feature_constraints = {
-        'Operativeduration': (0, float('inf')),
-        'Hb': (0, float('inf')),
-        'Bloodloss': (0, float('inf')),
-        'AKIGrade': (0, 3),
-        'Hct': (0, float('inf')),
-        'ALB': (0, float('inf')),
-        'SBP': (0, float('inf')),
-        'BaslineeGFR': (0, float('inf')),
-        'Anion_gap': (0, float('inf'))
-    }
 else:
     feature_columns = ['BaslineeGFR', 'Age', 'Pathology', 'AKI_and_AKD', 'TBIL', 'Mg', 'Scr', 'TG', 'WBC']
-    feature_constraints = {
-        'BaslineeGFR': (0, float('inf')),
-        'Age': (0, float('inf')),
-        'Pathology': (0, 2),
-        'AKI_and_AKD': (0, 3),
-        'TBIL': (0, float('inf')),
-        'Mg': (0, float('inf')),
-        'Scr': (0, float('inf')),
-        'TG': (0, float('inf')),
-        'WBC': (0, float('inf'))
-    }
 
 # 收集输入特征值
 input_features = {}
 for column in feature_columns:
-    min_value, max_value = feature_constraints[column]
-    if column in ['Hb', 'Bloodloss', 'SBP', 'Age']:
-        feature_value = st.number_input(column, value=0, min_value=int(min_value), max_value=int(max_value), step=1)
-    elif column in ['Urine_protein', 'AKIGrade', 'AKI_and_AKD', 'Pathology']:
+    if column == 'Urine_protein' or column == 'AKI_and_AKD' or column == 'Pathology':
         feature_value = st.selectbox(column, [0, 1, 2, 3])
+    elif column == 'Age':
+        feature_value = st.number_input(column, value=0, step=1)
     else:
-        feature_value = st.number_input(column, value=0.0, min_value=float(min_value), max_value=float(max_value), step=0.01, format="%.2f")
+        if column in ['Operativeduration', 'Hb', 'Bloodloss', 'Hct', 'SBP', 'ALB', 'BaslineeGFR', 'Anion_gap']:
+            feature_value = st.number_input(column, value=0, step=1)
+        else:
+            feature_value = st.number_input(column, value=0.0, step=0.01, format="%.2f")
     input_features[column] = feature_value
-
 
 # 创建一个按钮，当用户点击时进行预测
 if st.button("预测"):
