@@ -28,7 +28,7 @@ def main():
     st.title('AKD and CKD Probability prediction after nephrectomy')
 
 # User selects which content to display
-    selected_content = st.radio("Select Content", ("Model Introduction", "AKD and CKD Prediction"))
+    selected_content = st.radio("", ("Model Introduction", "AKD and CKD Prediction"))
 
     if selected_content == "Model Introduction":
         st.subheader("Model Introduction")
